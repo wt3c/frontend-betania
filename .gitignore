@@ -1,3 +1,6 @@
 # IDEs
 .idea
 .vscode
+
+# ai-memory (marker local de captura)
+.ai-memory.toml
