@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "lib": ["ES2022", "DOM"],
+    "types": ["vite/client", "node"],
+    "skipLibCheck": true,
+    "noEmit": true
+  },
+  "include": ["app/**/*.ts", "app/**/*.vue", "*.ts", "e2e/**/*.ts"]
+}

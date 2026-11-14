@@ -1,0 +1,41 @@
+{
+  "name": "betania-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vue-tsc --noEmit && vite build",
+    "type-check": "vue-tsc --noEmit",
+    "test:unit": "vitest run",
+    "test:e2e": "playwright test",
+    "lint": "eslint . --max-warnings 0 && prettier --check app e2e *.ts *.json",
+    "format": "prettier --write app e2e *.ts *.json"
+  },
+  "dependencies": {
+    "pinia": "latest",
+    "vue": "latest",
+    "vue-router": "latest"
+  },
+  "devDependencies": {
+    "@eslint/js": "latest",
+    "@playwright/test": "latest",
+    "@types/node": "latest",
+    "@vitejs/plugin-vue": "latest",
+    "@vue/test-utils": "latest",
+    "eslint": "latest",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-vue": "latest",
+    "jsdom": "latest",
+    "prettier": "latest",
+    "typescript": "latest",
+    "typescript-eslint": "latest",
+    "vite": "latest",
+    "vitest": "latest",
+    "vue-tsc": "latest"
+  },
+  "overrides": {
+    "minimatch": "^11.0.8",
+    "glob": "^14.0.6"
+  }
+}

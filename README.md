@@ -51,3 +51,8 @@ Este é um site estático, então você pode hospedá-lo gratuitamente em divers
 ## 📄 Licença
 
 Desenvolvido para uso exclusivo de Maria Betania.
+
+
+## Aplicação Vue
+
+A aplicação de login e clientes está em `/app/`. Consulte [a documentação](app/README.md) para fluxos, testes e hospedagem.

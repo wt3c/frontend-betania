@@ -4,3 +4,11 @@
 
 # ai-memory (marker local de captura)
 .ai-memory.toml
+
+node_modules/
+dist/
+playwright-report/
+test-results/
+.env
+.env.*
+!.env.example

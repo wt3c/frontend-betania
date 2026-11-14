@@ -1,0 +1,56 @@
+import { expect, test } from '@playwright/test'
+
+test('administradora convida e cliente conclui o primeiro acesso na API real', async ({
+  page,
+  browser,
+}) => {
+  const adminEmail = process.env.E2E_ADMIN_EMAIL
+  const adminPassword = process.env.E2E_ADMIN_PASSWORD
+  const clientPassword = process.env.E2E_CLIENT_PASSWORD
+  if (!adminEmail || !adminPassword || !clientPassword)
+    throw new Error('Execute pelo teste integrado isolado do backend.')
+  await page.goto('/app/login')
+  await page.getByLabel('E-mail', { exact: true }).fill(adminEmail)
+  await page.getByLabel('Senha', { exact: true }).fill(adminPassword)
+  await page.getByRole('button', { name: 'Entrar', exact: true }).click()
+  await expect(page.getByRole('heading', { name: 'Página inicial' })).toBeVisible()
+  await page.getByRole('link', { name: 'Novo cliente' }).click()
+  await page.getByLabel('E-mail do cliente').fill('browser-new@example.com')
+  await page.getByRole('button', { name: 'Cadastrar e enviar convite' }).click()
+  await expect(page.getByRole('status')).toContainText('Convite enviado')
+  await page.screenshot({ path: '/tmp/betania-admin.png', fullPage: true })
+  await page.getByRole('button', { name: 'Sair', exact: true }).click()
+  await expect(page).toHaveURL(/\/app\/login$/)
+
+  const context = await browser.newContext({ viewport: { width: 390, height: 844 } })
+  const mobile = await context.newPage()
+  mobile.on('pageerror', (error) => console.error('Erro no navegador:', error.message))
+  await mobile.goto('/app/login')
+  await mobile.getByLabel('E-mail', { exact: true }).fill('browser-client@example.com')
+  await mobile.getByLabel('Senha', { exact: true }).fill(clientPassword)
+  await mobile.getByRole('button', { name: 'Entrar', exact: true }).click()
+  await expect(mobile).toHaveURL(/primeiro-acesso$/)
+  await mobile.goto('/app/')
+  await expect(mobile).toHaveURL(/primeiro-acesso$/)
+  await mobile.getByLabel('Nome completo').fill('Cliente do Navegador')
+  await mobile.getByLabel('Telefone com DDD').fill('(21) 99999-1234')
+  await mobile.getByLabel('Senha temporária').fill(clientPassword)
+  await mobile.getByLabel('Nova senha', { exact: true }).fill('Client-new-secret-951!')
+  await mobile.screenshot({ path: '/tmp/betania-primeiro-acesso.png', fullPage: true })
+  await mobile.getByRole('button', { name: 'Concluir cadastro' }).click()
+  await expect(mobile.getByRole('heading', { name: 'Página inicial' })).toBeVisible()
+  await mobile.reload()
+  await expect(mobile.getByRole('heading', { name: 'Página inicial' })).toBeVisible()
+  await mobile.goto('/app/clientes/novo')
+  await expect(mobile.getByRole('heading', { name: 'Página inicial' })).toBeVisible()
+  await expect(mobile.getByRole('link', { name: 'Novo cliente' })).toHaveCount(0)
+  const cookies = await context.cookies()
+  expect(cookies.find((cookie) => cookie.name === 'refresh_token')?.httpOnly).toBe(true)
+  expect(await mobile.evaluate(() => JSON.stringify(localStorage))).not.toContain('access')
+  expect(await mobile.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false)
+  await mobile.getByRole('button', { name: 'Sair', exact: true }).click()
+  await expect(mobile).toHaveURL(/\/app\/login$/)
+  await mobile.reload()
+  await expect(mobile).toHaveURL(/\/app\/login$/)
+  await context.close()
+})
