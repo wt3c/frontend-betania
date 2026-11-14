@@ -24,9 +24,11 @@ async function logout() {
     <a class="brand" href="/">Betânia <span>Terapeuta</span></a>
     <nav v-if="auth.user" aria-label="Navegação principal">
       <RouterLink v-if="!auth.user.must_change_password" to="/">Início</RouterLink>
-      <RouterLink v-if="auth.user.is_admin && !auth.user.must_change_password" to="/clientes/novo"
-        >Novo cliente</RouterLink
-      >
+      <RouterLink v-if="!auth.user.must_change_password" to="/agenda">Agenda</RouterLink>
+      <template v-if="auth.user.is_admin && !auth.user.must_change_password">
+        <RouterLink to="/disponibilidade">Disponibilidade</RouterLink>
+        <RouterLink to="/clientes/novo">Novo cliente</RouterLink>
+      </template>
       <button class="text-button" :disabled="leaving" @click="logout">Sair</button>
     </nav>
   </header>

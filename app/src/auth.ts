@@ -26,11 +26,17 @@ function describeError(data: unknown): string {
   if (data && typeof data === 'object') return Object.values(data).map(describeError).join(' ')
   return 'Não foi possível concluir a solicitação.'
 }
-async function request<T>(path: string, body?: unknown, access?: string): Promise<T> {
+export type Method = 'GET' | 'POST' | 'PATCH' | 'DELETE'
+async function request<T>(
+  path: string,
+  body?: unknown,
+  access?: string,
+  method: Method = body === undefined ? 'GET' : 'POST',
+): Promise<T> {
   let response: Response
   try {
-    response = await fetch(`/api/accounts/${path}`, {
-      method: body === undefined ? 'GET' : 'POST',
+    response = await fetch(`/api/${path}`, {
+      method,
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
@@ -65,7 +71,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
   async function refresh() {
     if (!refreshing)
-      refreshing = request<{ access: string }>('token/refresh/', {})
+      refreshing = request<{ access: string }>('accounts/token/refresh/', {})
         .then((data) => {
           access.value = data.access
         })
@@ -78,7 +84,7 @@ export const useAuthStore = defineStore('auth', () => {
     if (initialized.value) return
     try {
       await refresh()
-      user.value = await request<Profile>('me/', undefined, access.value)
+      user.value = await request<Profile>('accounts/me/', undefined, access.value)
     } catch (error) {
       clear()
       if (!(error instanceof ApiError && error.status === 401))
@@ -87,9 +93,9 @@ export const useAuthStore = defineStore('auth', () => {
       initialized.value = true
     }
   }
-  async function authenticated<T>(path: string, body?: unknown): Promise<T> {
+  async function call<T>(path: string, method: Method = 'GET', body?: unknown): Promise<T> {
     try {
-      return await request<T>(path, body, access.value)
+      return await request<T>(path, body, access.value, method)
     } catch (error) {
       if (!(error instanceof ApiError && error.status === 401)) throw error
       try {
@@ -98,15 +104,15 @@ export const useAuthStore = defineStore('auth', () => {
         clear()
         throw refreshError
       }
-      return request<T>(path, body, access.value)
+      return request<T>(path, body, access.value, method)
     }
   }
   async function login(email: string, password: string) {
-    apply(await request<Session>('login/', { email, password }))
+    apply(await request<Session>('accounts/login/', { email, password }))
     sessionError.value = ''
   }
   async function invite(email: string) {
-    await authenticated('clients/', { email })
+    await call('accounts/clients/', 'POST', { email })
   }
   async function complete(data: {
     full_name: string
@@ -114,11 +120,22 @@ export const useAuthStore = defineStore('auth', () => {
     current_password: string
     new_password: string
   }) {
-    apply(await authenticated<Session>('onboarding/', data))
+    apply(await call<Session>('accounts/onboarding/', 'POST', data))
   }
   async function logout() {
-    await request('logout/', {})
+    await request('accounts/logout/', {})
     clear()
   }
-  return { access, user, initialized, sessionError, restore, login, invite, complete, logout }
+  return {
+    access,
+    user,
+    initialized,
+    sessionError,
+    restore,
+    call,
+    login,
+    invite,
+    complete,
+    logout,
+  }
 })

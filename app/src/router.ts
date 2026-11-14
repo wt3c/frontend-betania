@@ -4,6 +4,8 @@ import LoginView from './views/LoginView.vue'
 import OnboardingView from './views/OnboardingView.vue'
 import InviteView from './views/InviteView.vue'
 import HomeView from './views/HomeView.vue'
+import AgendaView from './views/AgendaView.vue'
+import AvailabilityView from './views/AvailabilityView.vue'
 
 export function createAppRouter(history: RouterHistory = createWebHistory('/app/')) {
   const router = createRouter({
@@ -12,6 +14,8 @@ export function createAppRouter(history: RouterHistory = createWebHistory('/app/
       { path: '/login', component: LoginView },
       { path: '/primeiro-acesso', component: OnboardingView },
       { path: '/clientes/novo', component: InviteView, meta: { admin: true } },
+      { path: '/agenda', component: AgendaView },
+      { path: '/disponibilidade', component: AvailabilityView, meta: { admin: true } },
       { path: '/', component: HomeView },
       { path: '/:pathMatch(.*)*', redirect: '/' },
     ],

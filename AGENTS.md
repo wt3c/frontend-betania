@@ -31,7 +31,7 @@ repositório se chama `frontend-betania`; referências antigas usam `landpage-be
 
 O frontend existente é uma landing page estática em HTML, CSS e JavaScript vanilla,
 com páginas de anamnese e política de privacidade. Usa Google Fonts externo.
-A aplicação Vue em `/app/` implementa login por senha, primeiro acesso e convite de clientes.
+A aplicação Vue em `/app/` implementa login por senha, primeiro acesso, convite de clientes e agenda (item 4).
 Há manifesto, lockfile, Vite, Vitest/Vue Test Utils e Playwright integrado ao backend. A stack obrigatória para a evolução é
 Vue.js, conforme a tarefa 2.4 e a seção abaixo; as ferramentas já estão instaladas para a aplicação em `/app/`.
 

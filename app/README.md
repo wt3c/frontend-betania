@@ -1,9 +1,13 @@
 # Aplicação Betânia Terapeuta
 
 A landing page da raiz foi preservada. A aplicação Vue fica em `/app/` e usa a API Django
-por `/api/accounts/`, com proxy local para `http://127.0.0.1:8000` no Vite.
+por `/api/accounts/` e `/api/scheduling/`, com proxy local para `http://127.0.0.1:8000` no Vite.
 
-Telas: login, primeiro acesso, página inicial e convite de cliente exclusivo da administradora.
+Telas: login, primeiro acesso, página inicial, convite de cliente exclusivo da administradora
+e agenda (`/agenda`). O cliente vê as próprias sessões e reserva horários livres dos próximos
+14 dias, agrupados por dia; a administradora consulta todos os agendamentos por período,
+altera a situação, remarca e cria agendamentos. `/disponibilidade` (administradora) mantém
+janelas semanais e bloqueios. Datas são exibidas e enviadas no fuso `America/Sao_Paulo`.
 O token de acesso fica em memória; o refresh usa cookie HttpOnly. Recarregar restaura a
 sessão pela API, e a troca de senha invalida tokens anteriores.
 
