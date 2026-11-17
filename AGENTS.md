@@ -31,6 +31,8 @@ repositório se chama `frontend-betania`; referências antigas usam `landpage-be
 
 O frontend existente é uma landing page estática em HTML, CSS e JavaScript vanilla,
 com páginas de anamnese e política de privacidade. Usa Google Fonts externo.
+Pela correção de 2026-11-16 (seção 1 do prompt do backend), o frontend deixa de ser
+uma landing page estática; o destino desse conteúdo ainda será definido.
 A aplicação Vue em `/app/` implementa login por senha, primeiro acesso, convite de clientes e agenda (item 4).
 Há manifesto, lockfile, Vite, Vitest/Vue Test Utils e Playwright integrado ao backend. A stack obrigatória para a evolução é
 Vue.js, conforme a tarefa 2.4 e a seção abaixo; as ferramentas já estão instaladas para a aplicação em `/app/`.
@@ -66,7 +68,8 @@ e novos CRUDs de sessões são objetivos ainda a implementar, descritos em
 - `app/src/`: aplicação Vue com login, primeiro acesso, convite administrativo e página inicial.
 - `app/tests/`: testes de componentes; `e2e/`: testes Playwright integrados à API real.
 - `package.json`, `vite.config.ts` e `playwright.config.ts`: ferramentas e execução dos testes.
-- `index.html`: landing page preservada, com CSS e JavaScript inline.
+- `index.html`: landing page estática atual, com CSS e JavaScript inline; preservá-la
+  como estática deixou de ser requisito.
 - `anamnese-trg.html`: formulário de anamnese, também com CSS e JavaScript inline.
 - `politica-de-privacidade.html`: página da política de privacidade.
 - `styles.css` e `script.js`: arquivos separados existentes. Conferir as referências
@@ -125,7 +128,8 @@ existentes e respeitar as autorizações de invocação e execução vigentes.
 
 ### Login e primeiro acesso — tarefa 3
 
-- Página inicial sem funcionalidades nesta etapa; preservar a landing page existente.
+- Página inicial sem funcionalidades nesta etapa. A preservação da landing page existente,
+  exigida nesta tarefa, foi substituída pela correção de 2026-11-16.
 - A administradora solicitada é `mariabetania4020@gmail.com`; prever também uma conta
   permanente de testes, distinta das fixtures descartáveis da suíte.
 - Só a administradora acessa o cadastro de clientes; a API também deve impor essa regra.
