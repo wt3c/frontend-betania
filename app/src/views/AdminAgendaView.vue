@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
+import BrDateInput from '../components/BrDateInput.vue'
 import {
   NEXT_STATUSES,
   STATUS_LABELS,
@@ -72,11 +73,11 @@ onMounted(() =>
     <form class="inline" data-range @submit.prevent="run(loadAppointments)">
       <div>
         <label for="range-start">De</label>
-        <input id="range-start" v-model="range.start" type="date" required />
+        <BrDateInput id="range-start" v-model="range.start" required />
       </div>
       <div>
         <label for="range-end">Até</label>
-        <input id="range-end" v-model="range.end" type="date" required />
+        <BrDateInput id="range-end" v-model="range.end" required />
       </div>
       <button type="submit" :disabled="busy">Consultar</button>
     </form>
@@ -113,11 +114,11 @@ onMounted(() =>
         >
           <div>
             <label :for="`reschedule-${item.id}`">Remarcar para</label>
-            <input
+            <BrDateInput
               :id="`reschedule-${item.id}`"
               v-model="newStart[item.id]"
               name="reschedule"
-              type="datetime-local"
+              with-time
               required
             />
           </div>
@@ -141,11 +142,11 @@ onMounted(() =>
         </option>
       </select>
       <label for="new-starts-at">Início (1 hora de sessão)</label>
-      <input
+      <BrDateInput
         id="new-starts-at"
         v-model="draft.starts_at"
         name="new-starts-at"
-        type="datetime-local"
+        with-time
         required
       />
       <button type="submit" :disabled="busy">Criar agendamento</button>

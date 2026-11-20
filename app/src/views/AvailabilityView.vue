@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
+import BrDateInput from '../components/BrDateInput.vue'
 import {
   WEEKDAYS,
   formatDateTime,
@@ -106,19 +107,19 @@ onMounted(() => run(load))
     <p v-else class="hint">Nenhum bloqueio futuro.</p>
     <form data-block @submit.prevent="addBlock">
       <label for="block-start">Início do bloqueio</label>
-      <input
+      <BrDateInput
         id="block-start"
         v-model="blockDraft.starts_at"
         name="block_start"
-        type="datetime-local"
+        with-time
         required
       />
       <label for="block-end">Fim do bloqueio</label>
-      <input
+      <BrDateInput
         id="block-end"
         v-model="blockDraft.ends_at"
         name="block_end"
-        type="datetime-local"
+        with-time
         required
       />
       <button type="submit" :disabled="busy">Adicionar bloqueio</button>

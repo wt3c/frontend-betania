@@ -77,8 +77,8 @@ describe('datas no fuso da clínica', () => {
       { starts_at: '2030-01-08T11:00:00Z', ends_at: '' },
     ])
     expect(groups.map((g) => [g.label, g.items.map((i) => i.time)])).toEqual([
-      ['segunda-feira, 07/01', ['08:00', '09:00', '23:00']],
-      ['terça-feira, 08/01', ['08:00']],
+      ['segunda-feira, 07/01/2030', ['08:00', '09:00', '23:00']],
+      ['terça-feira, 08/01/2030', ['08:00']],
     ])
   })
 })
@@ -99,7 +99,7 @@ describe('agenda do cliente', () => {
     })
     const { wrapper } = await render('/agenda')
     expect(wrapper.get('h1').text()).toBe('Minha agenda')
-    expect(wrapper.get('details[open] summary').text()).toContain('segunda-feira, 07/01')
+    expect(wrapper.get('details[open] summary').text()).toContain('segunda-feira, 07/01/2030')
     expect(wrapper.get('button[data-slot]').text()).toBe('10:00')
     expect(wrapper.text()).toContain('seg., 07/01/2030, 08:00')
     expect(wrapper.text()).toContain('Agendado')
@@ -171,6 +171,20 @@ describe('agenda da administradora', () => {
     expect((wrapper.get('select[name=status]').element as HTMLSelectElement).value).toBe('')
   })
 
+  it('mostra o período em dd/mm/aaaa e consulta a API em ISO', async () => {
+    adminRoutes()
+    const { wrapper } = await render('/agenda', admin)
+    const start = wrapper.get('#range-start')
+    expect((start.element as HTMLInputElement).value).toMatch(/^\d{2}\/\d{2}\/\d{4}$/)
+    await start.setValue('01/02/2030')
+    await wrapper.get('#range-end').setValue('15/02/2030')
+    await wrapper.get('form[data-range]').trigger('submit')
+    await flushPromises()
+    expect(String(calls('GET', '/appointments/').at(-1)?.[0])).toContain(
+      'start=2030-02-01&end=2030-02-15',
+    )
+  })
+
   it('remarca com PATCH e cria agendamento para um cliente', async () => {
     adminRoutes((method, url, body) => {
       if (method === 'PATCH') {
@@ -184,13 +198,13 @@ describe('agenda da administradora', () => {
       }
     })
     const { wrapper } = await render('/agenda', admin)
-    await wrapper.get('input[name=reschedule]').setValue('2030-01-08T14:00')
+    await wrapper.get('input[name=reschedule]').setValue('08/01/2030 14:00')
     await wrapper.get('form[data-reschedule]').trigger('submit')
     await flushPromises()
     expect(calls('PATCH', '/appointments/7/')).toHaveLength(1)
     expect((wrapper.get('input[name=reschedule]').element as HTMLInputElement).value).toBe('')
     await wrapper.get('select[name=client]').setValue('3')
-    await wrapper.get('input[name=new-starts-at]').setValue('2030-01-09T07:30')
+    await wrapper.get('input[name=new-starts-at]').setValue('09/01/2030 07:30')
     await wrapper.get('form[data-create]').trigger('submit')
     await flushPromises()
     expect(wrapper.get('[role=status]').text()).toContain('Agendamento criado')
@@ -225,8 +239,8 @@ describe('disponibilidade', () => {
     await wrapper.get('input[name=end_time]').setValue('18:00')
     await wrapper.get('form[data-window]').trigger('submit')
     await flushPromises()
-    await wrapper.get('input[name=block_start]').setValue('2030-02-01T08:00')
-    await wrapper.get('input[name=block_end]').setValue('2030-02-01T18:00')
+    await wrapper.get('input[name=block_start]').setValue('01/02/2030 08:00')
+    await wrapper.get('input[name=block_end]').setValue('01/02/2030 18:00')
     await wrapper.get('form[data-block]').trigger('submit')
     await flushPromises()
     await wrapper.get('button[data-remove-window]').trigger('click')

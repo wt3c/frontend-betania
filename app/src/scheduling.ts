@@ -87,6 +87,7 @@ const dayFormat = new Intl.DateTimeFormat('pt-BR', {
   weekday: 'long',
   day: '2-digit',
   month: '2-digit',
+  year: 'numeric',
 })
 const timeFormat = new Intl.DateTimeFormat('pt-BR', {
   timeZone: TIME_ZONE,

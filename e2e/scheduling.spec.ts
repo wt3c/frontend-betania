@@ -5,6 +5,11 @@ const localDate = (offsetDays: number) =>
     new Date(Date.now() + offsetDays * 86_400_000),
   )
 
+// Same calendar day as `localDate`, typed the way people use the platform.
+const brDate = (offsetDays: number) => localDate(offsetDays).split('-').reverse().join('/')
+
+test.use({ locale: 'en-US' })
+
 async function login(page: Page, email: string, password: string) {
   await page.goto('/app/login')
   await page.getByLabel('E-mail', { exact: true }).fill(email)
@@ -59,8 +64,8 @@ test('cliente reserva no celular e administradora gerencia a agenda na API real'
   await page.getByRole('button', { name: 'Adicionar janela' }).click()
   await expect(page.getByRole('status')).toContainText('Janela cadastrada')
   await expect(page.getByText('Domingo · 06:00–07:00')).toBeVisible()
-  await page.getByLabel('Início do bloqueio').fill(`${localDate(20)}T08:00`)
-  await page.getByLabel('Fim do bloqueio').fill(`${localDate(20)}T12:00`)
+  await page.getByLabel('Início do bloqueio').fill(`${brDate(20)} 08:00`)
+  await page.getByLabel('Fim do bloqueio').fill(`${brDate(20)} 12:00`)
   await page.getByRole('button', { name: 'Adicionar bloqueio' }).click()
   await expect(page.getByRole('status')).toContainText('Bloqueio cadastrado')
   await page.getByRole('button', { name: /^Remover bloqueio/ }).click()
@@ -72,17 +77,21 @@ test('cliente reserva no celular e administradora gerencia a agenda na API real'
 
   await page.getByRole('link', { name: 'Agenda' }).click()
   await expect(page.getByRole('heading', { name: 'Agenda', exact: true })).toBeVisible()
+  // The browser is in en-US: the page, not its language, decides the date format.
+  await expect(page.getByLabel('De', { exact: true })).toHaveValue(brDate(-7))
+  await expect(page.getByLabel('Até', { exact: true })).toHaveValue(brDate(13))
   await page.getByLabel('Cliente', { exact: true }).selectOption({ label: 'Cliente Agenda' })
-  await page.getByLabel('Início (1 hora de sessão)').fill(`${localDate(3)}T06:30`)
+  await page.getByLabel('Início (1 hora de sessão)').fill(`${brDate(3)} 06:30`)
   await page.getByRole('button', { name: 'Criar agendamento' }).click()
   await expect(page.getByRole('status')).toContainText('Agendamento criado')
   const outside = page.locator('[data-appointment]').filter({ hasText: '06:30' })
-  await outside.getByLabel('Remarcar para').fill(`${localDate(4)}T06:30`)
+  await outside.getByLabel('Remarcar para').fill(`${brDate(4)} 06:30`)
   await outside.getByRole('button', { name: 'Remarcar' }).click()
   await expect(page.getByRole('status')).toContainText('Agendamento remarcado')
+  await expect(outside).toContainText(`${brDate(4)}, 06:30`)
   // Real 409 from the API: 07:00 overlaps the session rescheduled to 06:30.
   await page.getByLabel('Cliente', { exact: true }).selectOption({ label: 'Cliente Agenda' })
-  await page.getByLabel('Início (1 hora de sessão)').fill(`${localDate(4)}T07:00`)
+  await page.getByLabel('Início (1 hora de sessão)').fill(`${brDate(4)} 07:00`)
   await page.getByRole('button', { name: 'Criar agendamento' }).click()
   await expect(page.getByRole('alert')).toContainText('Horário ocupado por outro agendamento')
   const booked = page.locator('[data-appointment]').filter({ hasNotText: '06:30' })
