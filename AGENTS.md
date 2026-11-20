@@ -32,8 +32,8 @@ repositório se chama `frontend-betania`; referências antigas usam `landpage-be
 Landing page, anamnese TRG e política de privacidade foram migradas para Vue em
 2026-11-16 (seção 1 do prompt do backend, ADR-013): cada HTML da raiz guarda só o
 `<head>` (SEO, JSON-LD, fontes) e monta seu componente de `site/`. Usa Google Fonts
-externo. A publicação exige build (`dist/`); o GitHub Pages atual serve a raiz sem
-build e depende da decisão D10 antes de receber estas páginas.
+externo. A publicação exige build (`dist/`): `.github/workflows/pages.yml` publica no GitHub Pages por Actions,
+atrás do CloudFront do ADR-015 do backend, com a API na mesma origem (`/api/*`).
 A aplicação Vue em `/app/` implementa login por senha, primeiro acesso, convite de clientes e agenda (item 4).
 Há manifesto, lockfile, Vite, Vitest/Vue Test Utils e Playwright integrado ao backend. A stack obrigatória para a evolução é
 Vue.js, conforme a tarefa 2.4 e a seção abaixo; as ferramentas já estão instaladas para a aplicação em `/app/`.
