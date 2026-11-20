@@ -29,10 +29,11 @@ Frontend da plataforma Betania Terapeuta, da terapeuta Maria Betânia. Este
 repositório se chama `frontend-betania`; referências antigas usam `landpage-betania`.
 É um projeto pessoal, sem as convenções corporativas do MPRJ.
 
-O frontend existente é uma landing page estática em HTML, CSS e JavaScript vanilla,
-com páginas de anamnese e política de privacidade. Usa Google Fonts externo.
-Pela correção de 2026-11-16 (seção 1 do prompt do backend), o frontend deixa de ser
-uma landing page estática; o destino desse conteúdo ainda será definido.
+Landing page, anamnese TRG e política de privacidade foram migradas para Vue em
+2026-11-16 (seção 1 do prompt do backend, ADR-013): cada HTML da raiz guarda só o
+`<head>` (SEO, JSON-LD, fontes) e monta seu componente de `site/`. Usa Google Fonts
+externo. A publicação exige build (`dist/`); o GitHub Pages atual serve a raiz sem
+build e depende da decisão D10 antes de receber estas páginas.
 A aplicação Vue em `/app/` implementa login por senha, primeiro acesso, convite de clientes e agenda (item 4).
 Há manifesto, lockfile, Vite, Vitest/Vue Test Utils e Playwright integrado ao backend. A stack obrigatória para a evolução é
 Vue.js, conforme a tarefa 2.4 e a seção abaixo; as ferramentas já estão instaladas para a aplicação em `/app/`.
@@ -68,10 +69,10 @@ e novos CRUDs de sessões são objetivos ainda a implementar, descritos em
 - `app/src/`: aplicação Vue com login, primeiro acesso, convite administrativo e página inicial.
 - `app/tests/`: testes de componentes; `e2e/`: testes Playwright integrados à API real.
 - `package.json`, `vite.config.ts` e `playwright.config.ts`: ferramentas e execução dos testes.
-- `index.html`: landing page estática atual, com CSS e JavaScript inline; preservá-la
-  como estática deixou de ser requisito.
-- `anamnese-trg.html`: formulário de anamnese, também com CSS e JavaScript inline.
-- `politica-de-privacidade.html`: página da política de privacidade.
+- `index.html`, `anamnese-trg.html`, `politica-de-privacidade.html`: entradas Vite com o
+  `<head>` de cada página; o conteúdo está em `site/LandingPage.vue`, `site/AnamnesePage.vue`
+  (regras puras em `site/anamneseLogic.ts`) e `site/PrivacyPage.vue`, com testes em
+  `site/tests/` e `e2e/site.spec.ts` (desktop e celular).
 - `styles.css` e `script.js`: arquivos separados existentes. Conferir as referências
   nos HTMLs antes de modificá-los; sua presença não comprova que sejam carregados.
 
@@ -129,7 +130,7 @@ existentes e respeitar as autorizações de invocação e execução vigentes.
 ### Login e primeiro acesso — tarefa 3
 
 - Página inicial sem funcionalidades nesta etapa. A preservação da landing page existente,
-  exigida nesta tarefa, foi substituída pela correção de 2026-11-16.
+  exigida nesta tarefa, foi substituída pela correção de 2026-11-16 e pela migração para Vue.
 - A administradora solicitada é `mariabetania4020@gmail.com`; prever também uma conta
   permanente de testes, distinta das fixtures descartáveis da suíte.
 - Só a administradora acessa o cadastro de clientes; a API também deve impor essa regra.
@@ -149,8 +150,8 @@ existentes e respeitar as autorizações de invocação e execução vigentes.
 - Mudanças visuais ou de comportamento devem ser verificadas no navegador, incluindo
   fluxos afetados, permissões, erros, navegação e tamanhos de tela relevantes. Registrar
   os cenários executados e os bloqueios; não declarar conclusão sem essa evidência.
-- Validar o JavaScript realmente carregado, inclusive os blocos inline. Uma checagem
-  isolada de `script.js` não cobre os scripts embutidos nos HTMLs.
+- Validar o JavaScript realmente carregado. `script.js` e `styles.css` não são
+  referenciados pelas páginas atuais; uma checagem isolada deles não cobre o site.
 - Ao introduzir lógica ou corrigir um bug, definir e executar o teste correspondente
   antes da implementação, conforme as regras globais. Usar a suíte existente em
   `app/tests/` e `e2e/`. O runner integrado do backend é opt-in e usa banco isolado;

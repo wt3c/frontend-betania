@@ -9,5 +9,5 @@
     "skipLibCheck": true,
     "noEmit": true
   },
-  "include": ["app/**/*.ts", "app/**/*.vue", "*.ts", "e2e/**/*.ts"]
+  "include": ["app/**/*.ts", "app/**/*.vue", "site/**/*.ts", "site/**/*.vue", "*.ts", "e2e/**/*.ts"]
 }
